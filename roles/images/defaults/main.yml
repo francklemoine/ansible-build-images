@@ -1,0 +1,12 @@
+---
+# default
+
+# proxy connections (mandatory)
+proxy_env:
+  foo: bar
+#  http_proxy: http://x.x.x.x:80
+#  https_proxy: http://x.x.x.x:80
+
+# specific argv to build images
+#docker_build_extra_args: "--build-arg http_proxy=http://x.x.x.x:80/ --build-arg https_proxy=http://x.x.x.x:80/ "
+

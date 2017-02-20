@@ -1,0 +1,20 @@
+---
+
+################################################################################
+# tags:
+#   domoticz:              image flem/domoticz
+################################################################################
+
+- name: Domoticz
+  hosts: domoticz
+  vars:
+    base_build_dir: rpi-domoticz
+    docker_image_name: flem/rpi-domoticz
+    docker_image_tag: 'latest'
+    docker_build_dir: ~{{ ansible_ssh_user }}/docker
+    docker_extra_files: []
+    docker_image_extra_tag: ''
+  roles:
+    - images
+  tags: [ 'domoticz' ]
+

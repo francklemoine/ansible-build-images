@@ -1,0 +1,69 @@
+---
+
+- assert:
+    that:
+      - 'docker_build_dir  != ""'
+      - 'base_build_dir    != ""'
+      - 'docker_image_name != ""'
+
+
+- name: install pip
+  easy_install: name=pip
+
+
+- name: install docker-py
+  environment: "{{ proxy_env }}"
+  pip: name=docker-py extra_args='--user'
+
+
+- name: create build directory
+  file:
+    path: "{{ docker_build_dir }}/{{ base_build_dir }}"
+    state: directory
+    owner: "{{ ansible_ssh_user }}"
+    group: "{{ ansible_ssh_user }}"
+    mode: 0755
+    recurse: yes
+
+
+- name: dockerfile
+  template:
+    src: "../files/{{ base_build_dir }}/{{ item.src }}"
+    dest: "{{ docker_build_dir }}/{{ base_build_dir }}/{{ item.dest }}"
+    owner: "{{ ansible_ssh_user }}"
+    group: "{{ ansible_ssh_user }}"
+    mode: 0644
+  with_items:
+    - { src: "Dockerfile", dest: "Dockerfile" }
+
+
+- name: extra files
+  copy:
+    src: "../files/{{ base_build_dir }}/{{ item }}"
+    dest: "{{ docker_build_dir }}/{{ base_build_dir }}/{{ item }}"
+    owner: "{{ ansible_ssh_user }}"
+    group: "{{ ansible_ssh_user }}"
+    mode: 0644
+  with_items:
+    - "{{ docker_extra_files }}"
+
+
+- name: build docker image
+  environment: "{{ proxy_env }}"
+  command: "docker build {{ docker_build_extra_args | default('') }} -t {{ docker_image_name }}:{{ docker_image_tag | default('latest') }} ."
+  args:
+    chdir: "{{ docker_build_dir }}/{{ base_build_dir }}"
+#  docker_image:
+#    name: {{ docker_image_name }}
+#    tag: x.x
+#    path: "{{ docker_build_dir }}/{{ base_build_dir }}"
+#    state: present
+
+
+- name: tag
+  command: >
+    docker tag -f
+    {{ docker_image_name }}:{{ docker_image_tag | default('latest') }}
+    {{ docker_image_name }}:{{ docker_image_extra_tag }}
+  when: (docker_image_extra_tag is defined) and (docker_image_extra_tag != '')
+
