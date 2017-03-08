@@ -13,7 +13,8 @@
 
 - name: install docker-py
   environment: "{{ proxy_env }}"
-  pip: name=docker-py extra_args='--user'
+  pip: name=docker-py
+  #pip: name=docker-py extra_args='--user'
 
 
 - name: create build directory
@@ -66,4 +67,3 @@
     {{ docker_image_name }}:{{ docker_image_tag | default('latest') }}
     {{ docker_image_name }}:{{ docker_image_extra_tag }}
   when: (docker_image_extra_tag is defined) and (docker_image_extra_tag != '')
-
