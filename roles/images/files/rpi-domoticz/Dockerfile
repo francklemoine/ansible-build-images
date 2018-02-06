@@ -21,7 +21,10 @@ RUN buildDeps=' \
 		libcurl4-openssl-dev \
 		libusb-dev \
 		zlib1g-dev \
+		python3-dev \
 		iputils-ping \
+		wget \
+		unzip \
 	' \
 	set -x \
 	&& apt-get -y update \
